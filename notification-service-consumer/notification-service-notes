@@ -1,0 +1,51 @@
+notification-service
+ ├── pom.xml
+ └── src/main/java
+     └── com/example/notification
+         ├── NotificationServiceApplication.java
+         ├── config
+         │    └── KafkaConsumerConfig.java
+         ├── consumer
+         │    └── PaymentEventListener.java
+         └── service
+              └── NotificationService.java
+         └── model
+              ├── PaymentCompletedEvent.java
+              └── PaymentFailedEvent.java
+----------------------------------------------
+Order Service (8081) → order-created-topic
+      ↓
+Inventory Service (8082) → inventory-reserved-topic / inventory-failed-topic
+      ↓
+Payment Service (8083) → payment-success-topic / payment-failed-topic
+      ↓
+Notification Service (8084) → prints notification
+---------------------------------------------------
+
+NOTIFICATION SERVICE (Kafka Consumer/Producer)
+==========================================
+Required dependencies
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+
+<!-- If email/SMS is added -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-mail</artifactId>
+</dependency>
+Here No spring-boot-starter-web will add , Because it does not expose REST APIs.
+--------------------------------------------------------------------
+Responsibility:-
+Consume Payment events:
+payment-success-topic → notify user
+payment-failed-topic → notify user
+No producer needed
+Only logging or sending notification (console/email for simplicity)

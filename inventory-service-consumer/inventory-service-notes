@@ -1,0 +1,55 @@
+inventory-service
+ ├── pom.xml
+ └── src/main/java
+     └── com/example/inventory
+         ├── InventoryServiceApplication.java
+         ├── config
+         │    ├── KafkaConsumerConfig.java
+         │    └── KafkaProducerConfig.java
+         ├── consumer
+         │    └── OrderEventListener.java
+         ├── producer
+         │    └── InventoryProducer.java
+         ├── model
+         │    ├── OrderCreatedEvent.java
+         │    ├── InventoryReservedEvent.java
+         │    └── InventoryFailedEvent.java
+         └── service
+              └── InventoryService.java
+
+-----------------------------------------
+Order Service (Producer)
+        |
+        v
+order-created-topic
+        |
+        v
+Inventory Service (Consumer)
+        |
+        ├── inventory-reserved-topic  → Payment Service (next)
+        └── inventory-failed-topic    → Order rejected
+
+--------------------------------------------------------
+INVENTORY SERVICE (Kafka Consumer/Producer)
+==========================================
+Required dependencies
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+
+Here No spring-boot-starter-web will add , Because it does not expose REST APIs.
+-------------------------------------------------------------------------------
+
+🔹 Responsibility
+Consume OrderCreatedEvent from order-created-topic
+Check inventory
+If stock available → produce InventoryReservedEvent
+If not available → produce InventoryFailedEvent
+👉 This service is both consumer and producer

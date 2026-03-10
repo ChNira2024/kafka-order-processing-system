@@ -1,0 +1,98 @@
+===================================================================================================================
+******Apache Kafka® Tutorials for Beginners | What & Why Apache Kafka? Brief introduction | JavaTechie******
+->Apache kafka is a open source distributed event streaming platform.
+->Event->Request, Stream->Continious Process
+->Event Stream means continious sending request to the kafka server to get the data and process and chagne the data called Event Stream
+->distributed means we can distribute our kafka server in eveywhere so that any one will be down other can pickup.
+->Kafka was orgnally developed in LinkedIn and subsequently open sourced in early 2011.Now Kafka software comes under Apache Software founder.
+->Kafka Components:Producer,Consumer,Broker,Cluster
+->Producer publish the message/push the meaasge/events to Consumer
+->Consumer Receive the message /pull the message/events from Producer But they can't communicate each other directly.
+->Broker:To send the data from Producer to Consumer one middle man require i.e kafka server/Kafka Broker.
+kafka is just a server or an intermediate entity that helps in message exchange between a producer and a consumer.
+->Kafka Cluster means it just a server which handle all the Broker/Computer.Assume the Producer is sending huge amount of data ata time then single Broker can't able to handle so that here kafka cluster will separate the request 
+in different different Broker.
+->Topic:paytm sends lots of request i.e UPI payment,Card payment.Flight booking,Movie booking,Mobile booking,Mobile Recharge etc..then kafka Broker accept the all the request and keep it with it.
+when consumer ask give me payment related all the message then Kafka Broker will ask i have lots of message with me which one you need ?
+so here Topic Comes to the picture, here we can create the different Topic for storing the different messages like Payment topic,Booking Topic etc..when Producer push the Payment message then it will be stored in Payment Topic.
+->Offset:In a single topic the messages are partition in different number.Assume Consumer will be offline then Offset will be take care of which messages are already consumed by consumer.when consumer is online then Offset directly tells to him that from where you will starts the Consume.
+->Consumer Groups:
+->Zookeeper:kafka uses Zookeeper for coordination and to track the status of kafka nodes.it also track of kafka topics,partition,offsets,etc..
+ have used following concepts like Eureka,Hystrix,API Gateway,Config serverResiliance4j with CircuitBreaker and Retry,Splunk configuration,..etc
+->Zookeeper manages the states/data of Kafka.
+->Kafka cluster manages all the broker/server of kafka server.Inside broker all the topics are there.inside topic all data is present.Topics used for catagorize the message(diff.type of request) 
+To manage all the request,Then inside topic partitions are present so that we partition the lots of request through its index.
+OffSet is the position of your message inside the partition index starts with.
+
+=>Producer sendiing data as Object and Consumer receiving the data as object.But Karka needs byte[] of data so  that we convert the data from producer i.e object 
+to byte[] using concept Serialization so that Kafka server easily understand and in Consumer side we again convert byte[] data to Object using Deserialization concept.
+---Kafka Installation----
+https://kafka.apache.org/community/downloads/kafka_2.13-3.5.1.tgz download and extract
+
+Kafka Start process: To start kafka, we need to start Zookeeper then start Kafka server.
+
+Open Command Prompt:1
+------------------------
+Step1)To start Zookeeper from command line run below command:-
+C:\kafka_2.13-3.5.1>bin\windows\zookeeper-server-start.bat config\zookeeper.properties
+after run the command, for comfirmation see the result:[2023-09-15 10:39:45,888] INFO binding to port 0.0.0.0/0.0.0.0:2181 (org.apache.zookeeper.server.NIOServerCnxnFactory)
+
+Open Command Prompt:2
+------------------------
+Step2)Then Start the kafka server in different command prompt..use below command
+C:\kafka_2.13-3.5.1>bin\windows\kafka-server-start.bat config\server.properties
+In got one error..see below
+C:\kafka_2.13-3.5.1>bin\windows\kafka-server-start.bat config\server.properties
+'wmic' is not recognized as an internal or external command,
+operable program or batch file.
+
+To REsolve this issue..I open kafka-server-start.bat and modify with below..
+IF [%1] EQU [] (
+    echo USAGE: %0 server.properties
+    EXIT /B 1
+)
+
+SetLocal
+
+rem --- Set Log4j options ---
+IF ["%KAFKA_LOG4J_OPTS%"] EQU [""] (
+    set KAFKA_LOG4J_OPTS=-Dlog4j.configuration=file:%~dp0../../config/log4j.properties
+)
+
+rem --- Set heap memory manually (Modern Windows fix) ---
+IF ["%KAFKA_HEAP_OPTS%"] EQU [""] (
+    rem You can change values if you want more or less memory
+    set KAFKA_HEAP_OPTS=-Xmx512M -Xms256M
+)
+
+"%~dp0kafka-run-class.bat" kafka.Kafka %*
+EndLocal
+
+After save this file ..again re-run the command..
+C:\kafka_2.13-3.5.1>bin\windows\kafka-server-start.bat config\server.properties
+=>yes..finally kafka also started...
+
+Open Command Prompt:3
+---------------------
+Step3)Create a topic to store the events/messages/data. then verify that topic is created or not..for create use below command
+C:\kafka_2.13-3.5.1>bin\windows\kafka-topics.bat --create --topic sisu-topic --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1
+Created topic sisu-topic.
+C:\kafka_2.13-3.5.1>bin\windows\kafka-topics.bat --list --bootstrap-server localhost:9092
+sisu-topic
+C:\kafka_2.13-3.5.1>bin\windows\kafka-topics.bat --delete --topic inventory-events --bootstrap-server localhost:9092
+
+
+Open Command Prompt: 4
+---------------------
+Step4)start develop produce and push message into created topic...using below command
+C:\kafka_2.13-3.5.1>bin\windows\kafka-console-consumer.bat --topic sisu-topic --from-beginning --bootstrap-server localhost:9092
+Hi, This is Niranjana
+
+Open Command Prompt: 5
+-------------------------
+Step5)start consume and read the message from created topic...using below command
+C:\kafka_2.13-3.5.1>bin\windows\kafka-console-producer.bat --topic sisu-topic --bootstrap-server localhost:9092
+>Hi, This is Niranjana
+
+
+NOTE::Any problem ? delete logs of kafka,zookeeper

@@ -1,0 +1,48 @@
+payment-service
+ ├── pom.xml
+ └── src/main/java
+     └── com/example/payment
+         ├── PaymentServiceApplication.java
+         ├── config
+         │    ├── KafkaConsumerConfig.java
+         │    └── KafkaProducerConfig.java
+         ├── consumer
+         │    └── InventoryEventListener.java
+         ├── producer
+         │    └── PaymentProducer.java
+         ├── model
+         │    ├── InventoryReservedEvent.java
+         │    ├── PaymentCompletedEvent.java
+         │    └── PaymentFailedEvent.java
+         └── service
+              └── PaymentService.java
+
+--------------------------------------------
+Order Service
+   ↓
+order-created-topic
+   ↓
+Inventory Service
+   ↓
+inventory-reserved-topic
+   ↓
+Payment Service
+   ↓
+payment-success-topic / payment-failed-topic
+
+-----------------------------------------------------
+PAYMENT SERVICE (Kafka Consumer/Producer)
+==========================================
+Required dependencies
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+
+Here No spring-boot-starter-web will add , Because it does not expose REST APIs.

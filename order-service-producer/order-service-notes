@@ -1,0 +1,81 @@
+ORDER SERVICE (API + Kafka)
+=============================
+Required dependencies
+<!-- REST API -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+
+<!-- Kafka -->
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka</artifactId>
+</dependency>
+
+<!-- Optional but useful -->
+<dependency>
+    <groupId>org.projectlombok</groupId>
+    <artifactId>lombok</artifactId>
+    <optional>true</optional>
+</dependency>
+<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+Why Order Service needs Web?
+Because it exposes REST endpoints (POST /orders).
+======================================================================
+
+Java Object
+   ↓ JsonSerializer
+Kafka Topic
+   ↓ JsonDeserializer
+Java Object
+ 
+Explanation of properties file::-
+---------------------------------
+1️.spring.kafka.bootstrap-servers=localhost:9092
+This tells your Spring Boot app where Kafka is running.
+localhost → Kafka broker machine
+9092 → default Kafka port
+=>“This property is used to connect the application to the Kafka broker cluster.”
+
+2️.spring.kafka.consumer.group-id=order-group
+This defines the consumer group name.
+All consumers with the same group-id
+Share the load of partitions
+Each message is processed once per group
+=>“Consumer group ensures scalability and fault tolerance. If one instance goes down, another takes over.”
+
+3️.spring.kafka.consumer.auto-offset-reset=earliest
+What to do if no offset exists for this consumer group.
+earliest	Start from beginning
+latest	Start from new messages
+🧠 Why earliest?
+Useful during development
+Ensures no message is missed
+=>“If the consumer has no committed offset, it starts reading from the beginning of the topic.”
+
+4.spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
+Kafka messages are received as JSON and converted into Java objects.
+
+5.spring.kafka.consumer.properties.spring.json.trusted.packages=*
+Allows Kafka to deserialize classes from any package.
+=>Production best practice: spring.json.trusted.packages=com.example.order.model
+
+6.spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
+Converts Java objects → JSON before sending to Kafka.
+
+=================================================
+STEP 1: ORDER-SERVICE (PRODUCER ONLY)
+🔹 Responsibility
+
+Accept order request (REST API)
+
+Publish OrderCreatedEvent to Kafka
+
+NO Kafka listener
+
+NO consumer config

@@ -1,5 +1,4 @@
-package com.kafka.order.enums;
-
+package com.kafka.inventory.enums;
 public enum OrderStatus {
     CREATED,
     INVENTORY_DONE,

@@ -96,3 +96,27 @@ C:\kafka_2.13-3.5.1>bin\windows\kafka-console-producer.bat --topic sisu-topic --
 
 
 NOTE::Any problem ? delete logs of kafka,zookeeper
+
+ERROR::-
+umer_offsets-10,__consumer_offsets-32,__consumer_offsets-40 and stopped moving logs for partitions  because they are in the failed log directory C:\tmp\kafka-logs. (kafka.server.ReplicaManager)
+[2026-04-15 13:25:02,717] WARN Stopping serving logs in dir C:\tmp\kafka-logs (kafka.log.LogManager)
+[2026-04-15 13:25:02,720] ERROR Shutdown broker because all log dirs in C:\tmp\kafka-logs have failed (kafka.log.LogManager)
+
+Solution::-
+Go to : C:\tmp\ and delete "kafka-logs and zookeeper" folder..
+=>Else do one thing Edit "config/server.properties" and change "log.dirs=C:/kafka/data"in properties file  then "C:\kafka\data". 👉 This avoids Windows temp folder issues
+
+
+==============================================
+
+List all topics
+
+Run this command:
+
+kafka-topics.bat --list --bootstrap-server localhost:9092
+
+👉 Output will look like:
+
+test-topic
+order-topic
+__consumer_offsets

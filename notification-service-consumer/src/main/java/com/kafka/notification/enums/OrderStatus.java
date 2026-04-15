@@ -1,4 +1,4 @@
-package com.kafka.order.enums;
+package com.kafka.notification.enums;
 
 public enum OrderStatus {
     CREATED,

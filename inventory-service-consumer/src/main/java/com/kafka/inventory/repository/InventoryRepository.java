@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.kafka.inventory.entity.Inventory;
 
 @Repository
-public interface InventoryRepository extends JpaRepository<Inventory, Long> {
+public interface InventoryRepository extends JpaRepository<Inventory,Long> {
     Inventory findByProductId(Long productId);
 }

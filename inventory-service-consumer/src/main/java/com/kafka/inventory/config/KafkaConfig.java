@@ -1,17 +1,29 @@
 package com.kafka.inventory.config;
 
 
-import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
 
 @Configuration
+@EnableKafka
 public class KafkaConfig {
 
-	public static final String INVENTORY_TOPIC = "inventory-events";
-
     @Bean
-    public NewTopic inventoryTopic() {
-        return new NewTopic(INVENTORY_TOPIC, 1, (short) 1);
+    public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
+            ConsumerFactory<String, Object> consumerFactory) {
+
+        ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+
+        factory.setConsumerFactory(consumerFactory);
+
+        // 🔥 Manual ACK
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+
+        return factory;
     }
 }

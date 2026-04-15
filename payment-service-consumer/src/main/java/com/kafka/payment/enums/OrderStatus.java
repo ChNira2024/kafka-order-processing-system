@@ -1,4 +1,4 @@
-package com.kafka.order.enums;
+package com.kafka.payment.enums;
 
 public enum OrderStatus {
     CREATED,

@@ -2,4 +2,6 @@ package com.kafka.inventory.model;
 
 import java.time.LocalDateTime;
 
-public record OrderEvent(Long orderId, String status, LocalDateTime timestamp) {}
+import com.kafka.inventory.enums.OrderStatus;
+
+public record OrderEvent(Long orderId, String productId, Integer quantity, Double amount, OrderStatus status, LocalDateTime timestamp) {}
